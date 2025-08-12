@@ -6,6 +6,7 @@ echo " パスワードマネージャーへようこそ! "
 echo "-----------------------------------"
 echo
 
+# パスワード追加
 add_password()
 {
     echo "サービス名を入力してください:"
@@ -25,30 +26,41 @@ add_password()
     echo
 }
 
-get_data()
+# 対象サービスの情報を取得
+get_info()
 {
+    # 対象サービスの該当行を取得
     target_record=`cat ./pw_list | grep $target_service`
+
+    # サービス名を取得
     disp_service=`echo $target_record | cut -d : -f 1`
+
+    # ユーザー名を取得
     disp_user=`echo $target_record | cut -d : -f 2`
+
+    # パスワードを取得
     disp_password=`echo $target_record | cut -d : -f 3`
 }
 
+# 情報を表示
 print_info()
 {
-    get_data $1
+    get_info
     echo "サービス名: $disp_service"
     echo "ユーザー名: $disp_user"
     echo "パスワード: $disp_password"
 }
 
+# パスワードを取得
 get_password()
 {
     echo "サービス名を入力してください:"
     read target_service
     echo
-    print_info $1
+    print_info
 }
 
+# 終了
 exit_func()
 {
     echo
@@ -70,13 +82,13 @@ do
 
     case "$function_num" in
         "1")
-            add_password $1
+            add_password
             ;;
         "2")
-            get_password $1
+            get_password
             ;;
         "9")
-            exit_func $1
+            exit_func
             ;;
     esac
     echo
