@@ -21,7 +21,7 @@ add_password()
     read password
     echo
 
-    echo "$service:$user:$password" >> pw_list
+    echo ""$service":"$user":"$password"" >> pw_list
     echo "パスワードの追加は成功しました。"
     echo
 }
@@ -30,28 +30,28 @@ add_password()
 get_data()
 {
     # サービス名を取得
-    disp_service=`echo $target_record | cut -d : -f 1`
+    disp_service=`echo "$target_record" | cut -d : -f 1`
 
     # ユーザー名を取得
-    disp_user=`echo $target_record | cut -d : -f 2`
+    disp_user=`echo "$target_record" | cut -d : -f 2`
 
     # パスワードを取得
-    disp_password=`echo $target_record | cut -d : -f 3`
+    disp_password=`echo "$target_record" | cut -d : -f 3`
 }
 
 # 情報を表示
 print_info()
 {
     # 対象サービスの該当行を取得
-    target_record=`cat ./pw_list | grep $target_service`
+    target_record=`cat ./pw_list | grep "$target_service"`
 
     if [ -z "$target_record" ]; then
         echo "そのサービスは登録されていません。"
     else
         get_data
-        echo "サービス名: $disp_service"
-        echo "ユーザー名: $disp_user"
-        echo "パスワード: $disp_password"
+        echo "サービス名: "$disp_service""
+        echo "ユーザー名: "$disp_user""
+        echo "パスワード: "$disp_password""
     fi
 }
 
