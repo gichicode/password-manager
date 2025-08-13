@@ -27,11 +27,8 @@ add_password()
 }
 
 # 対象サービスの情報を取得
-get_info()
+get_data()
 {
-    # 対象サービスの該当行を取得
-    target_record=`cat ./pw_list | grep $target_service`
-
     # サービス名を取得
     disp_service=`echo $target_record | cut -d : -f 1`
 
@@ -45,10 +42,17 @@ get_info()
 # 情報を表示
 print_info()
 {
-    get_info
-    echo "サービス名: $disp_service"
-    echo "ユーザー名: $disp_user"
-    echo "パスワード: $disp_password"
+    # 対象サービスの該当行を取得
+    target_record=`cat ./pw_list | grep $target_service`
+
+    if [ -z "$target_record" ]; then
+        echo "そのサービスは登録されていません。"
+    else
+        get_data
+        echo "サービス名: $disp_service"
+        echo "ユーザー名: $disp_user"
+        echo "パスワード: $disp_password"
+    fi
 }
 
 # パスワードを取得
