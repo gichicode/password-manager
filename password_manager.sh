@@ -94,6 +94,10 @@ do
         "9")
             exit_func
             ;;
+        *)
+            echo "入力が間違えています。"
+            echo "[ 1, 2, 9 ] のいずれかを入力してください。"
+            ;;
     esac
     echo
 done
