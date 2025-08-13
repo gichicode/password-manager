@@ -10,14 +10,17 @@ echo
 add_password()
 {
     echo "サービス名を入力してください:"
+    local service
     read service
     echo
 
     echo "ユーザー名を入力してください:"
+    local user
     read user
     echo
 
     echo "パスワードを入力してください:"
+    local password
     read password
     echo
 
@@ -26,29 +29,29 @@ add_password()
     echo
 }
 
-# 対象サービスの情報を取得
-get_data()
-{
-    # サービス名を取得
-    disp_service=`echo "$target_record" | cut -d : -f 1`
-
-    # ユーザー名を取得
-    disp_user=`echo "$target_record" | cut -d : -f 2`
-
-    # パスワードを取得
-    disp_password=`echo "$target_record" | cut -d : -f 3`
-}
-
 # 情報を表示
 print_info()
 {
     # 対象サービスの該当行を取得
-    target_record=`cat ./pw_list | grep "$target_service"`
+    local target_record
+    target_record=`cat ./pw_list | grep "$1"`
 
     if [ -z "$target_record" ]; then
         echo "そのサービスは登録されていません。"
     else
-        get_data
+        # サービス名を取得
+        local disp_service
+        disp_service=`echo "$target_record" | cut -d : -f 1`
+
+        # ユーザー名を取得
+        local disp_user
+        disp_user=`echo "$target_record" | cut -d : -f 2`
+
+        # パスワードを取得
+        local disp_password
+        disp_password=`echo "$target_record" | cut -d : -f 3`
+
+        # 各情報を表示
         echo "サービス名: "$disp_service""
         echo "ユーザー名: "$disp_user""
         echo "パスワード: "$disp_password""
@@ -59,9 +62,10 @@ print_info()
 get_password()
 {
     echo "サービス名を入力してください:"
+    local target_service
     read target_service
     echo
-    print_info
+    print_info $target_service
 }
 
 # 終了
