@@ -6,6 +6,42 @@ echo " パスワードマネージャーへようこそ! "
 echo "-----------------------------------"
 echo
 
+readonly ASC_PW_FILE="pw_list.asc"
+readonly PW_FILE="pw_list"
+
+# 暗号化
+encrypt()
+{
+    local email
+    email=`cat .email`
+    gpg --batch --yes --armor --encrypt --recipient "$email" "$PW_FILE"
+    rm "$PW_FILE"
+}
+
+# 復号化
+decrypt()
+{
+    gpg --batch --yes -d -o "$PW_FILE" "$ASC_PW_FILE"
+}
+
+# パスワード登録
+register_password()
+{
+    # 復号化
+    if [ -e "$ASC_PW_FILE" ]; then
+        decrypt
+    fi
+
+    # パスワード書き込み
+    echo ""$1":"$2":"$3"" >> "$PW_FILE"
+
+    # 暗号化
+    encrypt
+
+    echo
+    echo "パスワードの追加は成功しました。"
+}
+
 # パスワード追加
 add_password()
 {
@@ -23,18 +59,26 @@ add_password()
     local password
     read password
     echo
-
-    echo ""$service":"$user":"$password"" >> pw_list
-    echo "パスワードの追加は成功しました。"
-    echo
+    
+    register_password "$service" "$user" "$password"
 }
 
 # 情報を表示
 print_info()
 {
+    if [ -e "$ASC_PW_FILE" ]; then 
+        # 復号化
+        decrypt
+    else
+        touch "$PW_FILE"
+    fi
+
     # 対象サービスの該当行を取得
     local target_record
-    target_record=`cat ./pw_list | grep "$1"`
+    target_record=`cat "$PW_FILE" | grep "$1"`
+
+    # 暗号化
+    encrypt
 
     if [ -z "$target_record" ]; then
         echo "そのサービスは登録されていません。"
@@ -52,6 +96,7 @@ print_info()
         disp_password=`echo "$target_record" | cut -d : -f 3`
 
         # 各情報を表示
+        echo
         echo "サービス名: "$disp_service""
         echo "ユーザー名: "$disp_user""
         echo "パスワード: "$disp_password""
@@ -71,7 +116,6 @@ get_password()
 # 終了
 exit_func()
 {
-    echo
     echo "Thank you!"
     echo
     exit
