@@ -6,29 +6,28 @@ echo " パスワードマネージャーへようこそ! "
 echo "-----------------------------------"
 echo
 
-readonly ASC_PW_FILE="pw_list.asc"
+readonly PASSPHRASE_FILE=".passphrase"
+readonly GPG_PW_FILE="pw_list.gpg"
 readonly PW_FILE="pw_list"
 
 # 暗号化
 encrypt()
 {
-    local email
-    email=`cat .email`
-    gpg --batch --yes --armor --encrypt --recipient "$email" "$PW_FILE"
+    gpg --batch --yes --passphrase-file "$PASSPHRASE_FILE" -c --s2k-cipher-algo AES256 --s2k-digest-algo SHA512 --s2k-count 65536 "$PW_FILE"
     rm "$PW_FILE"
 }
 
 # 復号化
 decrypt()
 {
-    gpg --batch --yes -d -o "$PW_FILE" "$ASC_PW_FILE"
+    gpg --batch --yes --passphrase-file "$PASSPHRASE_FILE" --output "$PW_FILE" --decrypt "$GPG_PW_FILE"
 }
 
 # パスワード登録
 register_password()
 {
     # 復号化
-    if [ -e "$ASC_PW_FILE" ]; then
+    if [ -e "$GPG_PW_FILE" ]; then
         decrypt
     fi
 
@@ -66,7 +65,7 @@ add_password()
 # 情報を表示
 print_info()
 {
-    if [ -e "$ASC_PW_FILE" ]; then 
+    if [ -e "$GPG_PW_FILE" ]; then 
         # 復号化
         decrypt
     else
