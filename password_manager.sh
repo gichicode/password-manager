@@ -13,14 +13,24 @@ readonly PW_FILE="pw_list"
 # 暗号化
 encrypt()
 {
-    gpg --batch --yes --passphrase-file "$PASSPHRASE_FILE" -c --s2k-cipher-algo AES256 --s2k-digest-algo SHA512 --s2k-count 65536 "$PW_FILE"
+    if [ ! -s "$PASSPHRASE_FILE" ]; then
+        # パスフレーズ設定ファイル未定義
+        gpg --batch --yes -c --s2k-cipher-algo AES256 --s2k-digest-algo SHA512 --s2k-count 65536 "$PW_FILE"
+    else
+        gpg --batch --yes --passphrase-file "$PASSPHRASE_FILE" -c --s2k-cipher-algo AES256 --s2k-digest-algo SHA512 --s2k-count 65536 "$PW_FILE"
+    fi
     rm "$PW_FILE"
 }
 
 # 復号化
 decrypt()
 {
-    gpg --batch --yes --passphrase-file "$PASSPHRASE_FILE" --output "$PW_FILE" --decrypt "$GPG_PW_FILE"
+    if [ ! -s "$PASSPHRASE_FILE" ]; then
+        # パスフレーズ設定ファイル未定義
+        gpg --batch --yes --output "$PW_FILE" --decrypt "$GPG_PW_FILE"
+    else
+        gpg --batch --yes --passphrase-file "$PASSPHRASE_FILE" --output "$PW_FILE" --decrypt "$GPG_PW_FILE"
+    fi
 }
 
 # パスワード登録
@@ -65,8 +75,8 @@ add_password()
 # 情報を表示
 print_info()
 {
+    # 復号化
     if [ -e "$GPG_PW_FILE" ]; then 
-        # 復号化
         decrypt
     else
         touch "$PW_FILE"
