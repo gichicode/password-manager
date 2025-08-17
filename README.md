@@ -9,9 +9,7 @@
 
 ## 事前準備
 
-### GnuPGのインストール
-
-#### Ubuntu
+### GnuPGのインストール (Ubuntu)
 
 UbuntuにはデフォルトでGnuPGがインストールされているようです。
 次のコマンドでGnuPGのバージョンが確認できればインストール不要です。
@@ -19,12 +17,12 @@ UbuntuにはデフォルトでGnuPGがインストールされているようで
 gpg --version
 ```
 
-GnuPGがインストールされていなければ、次ののコマンドでインストールします。
+GnuPGがインストールされていなければ、次のコマンドでインストールします。
 ```bash
 apt install gnupg
 ```
 
-#### macOS
+### GnuPGのインストール (macOS)
 
 次ののHomebrew コマンドでインストールできます。
 
@@ -51,11 +49,7 @@ cd password-manager
 #### パスフレーズの設定
 
 1. プログラムのルートディレクトリ(password_manager.sh があるディレクトリ) に空の .passphrase ファイルを作成してください。
-1. このファイルの1行目にに暗号化・復号化に使用するパスフレーズを書き込みます。以下はパスフレーズとして "hogefugapiyo" を設定する場合の例。
-
-```bash:.passphrase
-hogefugapiyo
-```
+1. このファイルの1行目に暗号化・復号化に使用する任意のパスフレーズを書き込みます。
 
 #### .passphrase ファイルの権限変更
 
@@ -70,4 +64,3 @@ chmod 600 .passphrase
 ```bash
 ./password_manager.sh
 ```
-
