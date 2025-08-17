@@ -82,27 +82,21 @@ print_info()
         touch "$PW_FILE"
     fi
 
-    # 対象サービスの該当行を取得
-    local target_record
-    target_record=`cat "$PW_FILE" | grep "$1"`
+    # 対象サービスの行番号を取得
+    local record_num=`cut -d : -f 1 "$PW_FILE" | grep -nx "$1" | head -n 1 | cut -d : -f 1`
 
-    # 暗号化
-    encrypt
-
-    if [ -z "$target_record" ]; then
+    if [ -z "$record_num" ]; then
+        echo
         echo "そのサービスは登録されていません。"
     else
         # サービス名を取得
-        local disp_service
-        disp_service=`echo "$target_record" | cut -d : -f 1`
+        local disp_service=`sed -n "$record_num"p "$PW_FILE" | cut -d : -f 1`
 
         # ユーザー名を取得
-        local disp_user
-        disp_user=`echo "$target_record" | cut -d : -f 2`
+        local disp_user=`sed -n "$record_num"p "$PW_FILE" | cut -d : -f 2`
 
         # パスワードを取得
-        local disp_password
-        disp_password=`echo "$target_record" | cut -d : -f 3`
+        local disp_password=`sed -n "$record_num"p "$PW_FILE" | cut -d : -f 3`
 
         # 各情報を表示
         echo
@@ -110,6 +104,9 @@ print_info()
         echo "ユーザー名: "$disp_user""
         echo "パスワード: "$disp_password""
     fi
+
+    # 暗号化
+    encrypt
 }
 
 # パスワードを取得
